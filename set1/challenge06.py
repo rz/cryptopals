@@ -65,7 +65,7 @@ if __name__ == '__main__':
     likely_keys = [transpose_and_solve(ciphertext, keysize) for keysize in likely_keysizes]
     decoded = [(key, decode(ciphertext, key)) for key in likely_keys]
 
-    # 3. score the plaintexts by which one looks most like english (ascii) and use the first one
+    # 3. score the plaintexts by which one looks most like english (ascii) and use the best one
     decoded = sorted(decoded, key=lambda x: util.ascii_score(x[1]), reverse=True)
     key, plaintext = decoded[0]
 
