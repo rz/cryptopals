@@ -7,6 +7,10 @@ def str_to_bytes(input_str, encoding='utf8'):
     return bytes(input_str, encoding)
 
 
+def bytes_to_str(input_str, encoding='utf8'):
+    return input_str.decode(encoding, errors='replace')
+
+
 def hex_to_bytes(input_str):
     return bytes.fromhex(input_str)
 
