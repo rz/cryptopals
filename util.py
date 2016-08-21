@@ -1,6 +1,9 @@
 import base64
 import itertools
+import random
 import string
+
+from Crypto.Cipher import AES
 
 
 def str_to_bytes(input_str, encoding='utf8'):
@@ -54,4 +57,31 @@ def chunks(iterable, size):
 
 def transpose(iterable):
     return list(map(list, itertools.zip_longest(*iterable)))
+
+
+def _encrypt_aes_ecb(plainbytes, key):
+    cipher = AES.new(key, AES.MODE_ECB)
+    ciphertext = cipher.encrypt(plainbytes)
+    return ciphertext
+
+
+def encrypt_aes(plainbytes, key, mode='ecb', iv=b'\x00'*8):
+    if mode == 'ecb':
+        ciphertext = _encrypt_aes_ecb(plainbytes, key)
+    elif mode == 'cbc':
+        block_size = len(iv)
+        blocks = chunks(plainbytes, block_size)
+        x = iv
+        ciphertext = bytes()
+        for block in blocks:
+            encrypted_block = _encrypt_aes_ecb(fixed_xor(block, x), key)
+            ciphertext += encrypted_block
+            x = encrypted_block
+    else:
+        raise ValueError('Unsupported mode: %s' % mode)
+    return ciphertext
+
+
+def get_random_bytes(n):
+    return bytes([random.randint(0, 255) for _ in range(n)])
 
